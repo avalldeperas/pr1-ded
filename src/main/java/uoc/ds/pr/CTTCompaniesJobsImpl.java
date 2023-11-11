@@ -16,36 +16,26 @@ import java.util.Objects;
 public class CTTCompaniesJobsImpl implements CTTCompaniesJobs {
 
     private final Worker[] workers;
-    private int numWorkers;
-
     private final Company[] companies;
-    private int numCompanies;
-
+    private final JobOffer[] jobOffers;
     // TODO - switch to QueueLinkedList
+    private int totalRequests;
     private final Queue<Request> requests;
 
-    private final JobOffer[] jobOffers;
-    private int numJobOffers;
-
-    private int numPendingRequests;
-    private int totalRejectedRequests;
-    private int totalRequests;
-    private Worker mostActiveWorker;
     private OrderedVector<JobOffer> bestJobOffers;
+    private Worker mostActiveWorker;
+
+    private int numWorkers;
+    private int numCompanies;
+    private int numJobOffers;
+    private int totalRejectedRequests;
 
     public CTTCompaniesJobsImpl() {
         workers = new Worker[MAX_NUM_WORKERS];
-        numWorkers = 0;
         companies = new Company[MAX_NUM_COMPANIES];
-        numCompanies = 0;
         jobOffers = new JobOffer[MAX_NUM_JOBOFFERS];
-        numJobOffers = 0;
         requests = new QueueArrayImpl<>();
-        totalRequests = 0;
-        numPendingRequests = 0;
-        totalRejectedRequests = 0;
-        mostActiveWorker = null;
-        bestJobOffers = new OrderedVector<>(100, Comparator.comparingDouble(JobOffer::getTotalRating));
+        bestJobOffers = new OrderedVector<>(MAX_NUM_RATINGS, Comparator.comparingDouble(JobOffer::getTotalRating));
     }
 
     @Override
@@ -85,7 +75,6 @@ public class CTTCompaniesJobsImpl implements CTTCompaniesJobs {
         Request request = new Request(id, jobOffer, description);
         requests.add(request);
         totalRequests++;
-        numPendingRequests++;
     }
 
     @Override
@@ -93,7 +82,6 @@ public class CTTCompaniesJobsImpl implements CTTCompaniesJobs {
         Request request = this.requests.poll();
         if (request == null)
             throw new NoRequestException("There are no requests to update.");
-        numPendingRequests--;
         request.setStatus(status);
         request.setDateStatus(date);
         request.setDescriptionStatus(description);
@@ -219,11 +207,10 @@ public class CTTCompaniesJobsImpl implements CTTCompaniesJobs {
 
     @Override
     public JobOffer getBestJobOffer() throws NOJobOffersException {
-        // TODO this needs to be reviewed.
         if (bestJobOffers.size() == 0)
             throw new NOJobOffersException("There are no rated job offers yet.");
 
-        return bestJobOffers.values().next();
+        return bestJobOffers.getFirstElement();
     }
 
     @Override

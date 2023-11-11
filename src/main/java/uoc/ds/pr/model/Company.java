@@ -8,7 +8,6 @@ public class Company {
     private String name;
     private String description;
     private LinkedList<JobOffer> jobOffers;
-    private int numJobOffers;
 
     public Company(String id, String name, String description) {
         this.id = id;
@@ -43,6 +42,5 @@ public class Company {
 
     public void addJobOffer(JobOffer jobOffer){
         jobOffers.insertEnd(jobOffer);
-        numJobOffers++;
     }
 }

@@ -10,6 +10,8 @@ import java.time.LocalDate;
 public interface CTTCompaniesJobs {
 
     int MAX_NUM_WORKERS = 250;
+    // We do not need a big amount, just the top 10
+    int MAX_NUM_RATINGS = 10;
     int MAX_NUM_COMPANIES = 26;
     int MAX_NUM_JOBOFFERS = 350;
 

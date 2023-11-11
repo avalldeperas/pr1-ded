@@ -8,6 +8,7 @@ import java.util.Comparator;
 
 public class OrderedVector<T> implements FiniteContainer<T> {
 
+    /** first element >>>> last element */
     private T[] elements;
     private int len;
     private final Comparator<T> cmp;
@@ -42,5 +43,9 @@ public class OrderedVector<T> implements FiniteContainer<T> {
 
     public Iterator<T> values() {
         return new IteratorArrayImpl<>(this.elements, this.len,0);
+    }
+
+    public T getFirstElement() {
+        return this.elements[0];
     }
 }
