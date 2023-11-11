@@ -1,9 +1,14 @@
 package uoc.ds.pr.model;
 
 public class Enrollment {
-    private Company worker;
+    private Worker worker;
 
-    public Company getWorker() {
+    public Enrollment(Worker worker) {
+        this.worker = worker;
+    }
+
+    public Worker getWorker() {
         return worker;
     }
+
 }

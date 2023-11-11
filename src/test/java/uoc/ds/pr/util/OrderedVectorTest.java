@@ -4,7 +4,7 @@ import edu.uoc.ds.traversal.Iterator;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import uoc.ds.pr.OrderedVector;
+import uoc.ds.pr.utils.OrderedVector;
 
 import java.util.Comparator;
 

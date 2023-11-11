@@ -4,7 +4,7 @@ import edu.uoc.ds.adt.sequential.Queue;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import uoc.ds.pr.QueueLinkedList;
+import uoc.ds.pr.utils.QueueLinkedList;
 
 public class QueueLinkedListTest {
     Queue<Integer> queue;
