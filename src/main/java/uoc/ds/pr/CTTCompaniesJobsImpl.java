@@ -10,24 +10,10 @@ import uoc.ds.pr.utils.OrderedVector;
 import uoc.ds.pr.utils.QueueLinkedList;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.Objects;
 
 public class CTTCompaniesJobsImpl implements CTTCompaniesJobs {
-    /**
-     * treballadors ------------------------------------------ vector estàtic (x)   - Worker[] x
-     * empreses ---------------------------------------------- vector estàtic (x)   - Company[] x
-     * ofertes de feina d'una empresa  ----------------------- llista encadenada    - LinkedList x
-     * sol·licituds ------------------------------------------ cua no fitada        - QueueLinkedList x
-     * ofertes de feina -------------------------------------- vector (x)           - JobOffer[] x
-     * ofertes de feina en què un treballador és contractat--- llista encadenada    - LinkedList. x
-     * valoracions ------------------------------------------- llista encadenada    - LinkedList. x
-     * inscripcions ------------------------------------------ cua no fitada        - QueueLinkedList.
-     * inscripcions suplents --------------------------------- cua no fitada        - QueueLinkedList.
-     * total de sol·licituds --------------------------------- enter                - Integer x
-     * total de sol·licituds rebutjades ---------------------- enter                - Integer x
-     * treballador més actiu --------------------------------- apuntador            - Worker. x
-     * l'oferta de treball millor valorada ------------------- vector ordenat       - OrderedVector. ????
-     */
 
     private final Worker[] workers;
     private int numWorkers;
@@ -35,6 +21,7 @@ public class CTTCompaniesJobsImpl implements CTTCompaniesJobs {
     private final Company[] companies;
     private int numCompanies;
 
+    // TODO - switch to QueueLinkedList
     private final Queue<Request> requests;
 
     private final JobOffer[] jobOffers;
@@ -58,8 +45,7 @@ public class CTTCompaniesJobsImpl implements CTTCompaniesJobs {
         numPendingRequests = 0;
         totalRejectedRequests = 0;
         mostActiveWorker = null;
-        // TODO how to instantiate this?
-//        bestJobOffers = new OrderedVector<>();
+        bestJobOffers = new OrderedVector<>(100, Comparator.comparingDouble(JobOffer::getTotalRating));
     }
 
     @Override
@@ -99,6 +85,7 @@ public class CTTCompaniesJobsImpl implements CTTCompaniesJobs {
         Request request = new Request(id, jobOffer, description);
         requests.add(request);
         totalRequests++;
+        numPendingRequests++;
     }
 
     @Override
@@ -106,14 +93,18 @@ public class CTTCompaniesJobsImpl implements CTTCompaniesJobs {
         Request request = this.requests.poll();
         if (request == null)
             throw new NoRequestException("There are no requests to update.");
+        numPendingRequests--;
         request.setStatus(status);
         request.setDateStatus(date);
         request.setDescriptionStatus(description);
 
         if (Status.ENABLED.equals(status)) {
-            jobOffers[numJobOffers++] = request.getJobOffer();
+            JobOffer jobOffer = request.getJobOffer();
+            jobOffers[numJobOffers++] = jobOffer;
+            jobOffer.getCompany().addJobOffer(jobOffer);
         } else if (Status.DISABLED.equals(status)) {
             totalRejectedRequests++;
+            // TODO missing test for checking that for DISABLED, we don't store job offers in companies?
         }
 
         return request;
@@ -129,8 +120,7 @@ public class CTTCompaniesJobsImpl implements CTTCompaniesJobs {
         if (jobOffer == null)
             throw new JobOfferNotFoundException(String.format("Job offer with id '%s' not found.", jobOfferId));
 
-        // TODO - check if worker already in job offer to throw WorkerAlreadyEnrolledException
-        if (false)
+        if (jobOffer.hasWorkerId(workerId))
             throw new WorkerAlreadyEnrolledException(String.format("Worker '%s' already enrolled in job offer '%s'", workerId, jobOfferId));
 
         if (worker.getQualification().getValue() < jobOffer.getMinQualification().getValue())
@@ -195,10 +185,16 @@ public class CTTCompaniesJobsImpl implements CTTCompaniesJobs {
         if (jobOffer == null)
             throw new JobOfferNotFoundException(String.format("Job offer %s", jobOfferId));
 
-        // TODO - if worker not enrolled throw WorkerNOEnrolledException
+        // TODO - do only enrolled workers (NOT susbstitutes) be able to add ratings?
+        if (!jobOffer.hasWorkerId(workerId))
+            throw new WorkerNOEnrolledException(String.format("Worker id %s not enrolled to job offer %s yet.", workerId, jobOfferId));
 
         Rating rating = new Rating(value, message);
         jobOffer.addRating(rating);
+
+        // TODO - update ordered vector of best offers
+        this.bestJobOffers.delete(jobOffer);
+        this.bestJobOffers.update(jobOffer);
     }
 
     @Override
@@ -207,10 +203,10 @@ public class CTTCompaniesJobsImpl implements CTTCompaniesJobs {
         if (jobOffer == null)
             throw new JobOfferNotFoundException(String.format("Job offer '%s' does not exist.", jobOfferId));
 
-        if (jobOffer.getRatings().isEmpty())
+        if (!jobOffer.getRatings().hasNext())
             throw new NORatingsException(String.format("Job offer '%s' has no ratings yet.", jobOfferId));
 
-        return jobOffer.getRatings().values();
+        return jobOffer.getRatings();
     }
 
     @Override
@@ -218,7 +214,6 @@ public class CTTCompaniesJobsImpl implements CTTCompaniesJobs {
         if (mostActiveWorker == null)
             throw new NoWorkerException("There are no workers with any activity yet.");
 
-        // TODO shall we do some logic here?
         return mostActiveWorker;
     }
 

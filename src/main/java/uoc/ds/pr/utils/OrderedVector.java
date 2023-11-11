@@ -8,18 +8,18 @@ import java.util.Comparator;
 
 public class OrderedVector<T> implements FiniteContainer<T> {
 
-    private T[] data;
+    private T[] elements;
     private int len;
     private final Comparator<T> cmp;
 
     public OrderedVector(int maxLen, Comparator<T> cmp) {
         this.len = 0;
         this.cmp = cmp;
-        data = (T[]) new Object[maxLen];
+        elements = (T[]) new Object[maxLen];
     }
 
-    public void update(T i) {
-        data[len++] = i;
+    public void update(T newElement) {
+        elements[len++] = newElement;
     }
 
     @Override
@@ -32,16 +32,15 @@ public class OrderedVector<T> implements FiniteContainer<T> {
     }
 
     public boolean isFull() {
-        return this.len == this.data.length;
+        return this.len == this.elements.length;
     }
 
+    // TODO - implement this...
     public void delete(T i) {
-        for (T t: data){
-
-        }
+        return;
     }
 
     public Iterator<T> values() {
-        return new IteratorArrayImpl<>(this.data, this.len,0);
+        return new IteratorArrayImpl<>(this.elements, this.len,0);
     }
 }

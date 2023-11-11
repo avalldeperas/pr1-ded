@@ -8,11 +8,13 @@ public class Company {
     private String name;
     private String description;
     private LinkedList<JobOffer> jobOffers;
+    private int numJobOffers;
 
     public Company(String id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
+        this.jobOffers = new LinkedList<>();
     }
 
     public String getName() {
@@ -40,6 +42,7 @@ public class Company {
     }
 
     public void addJobOffer(JobOffer jobOffer){
-        // add joboffer to the list
+        jobOffers.insertEnd(jobOffer);
+        numJobOffers++;
     }
 }

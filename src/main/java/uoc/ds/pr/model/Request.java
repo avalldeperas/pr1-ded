@@ -51,4 +51,8 @@ public class Request {
     public void setDateStatus(LocalDate date) {
         this.dateStatus = date;
     }
+
+    public void addJobOfferToCompany(Company company) {
+        this.jobOffer.getCompany();
+    }
 }
