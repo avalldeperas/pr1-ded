@@ -1,9 +1,10 @@
 package uoc.ds.pr;
 
+import edu.uoc.ds.adt.nonlinear.Dictionary;
+import edu.uoc.ds.adt.sequential.DictionaryArrayImpl;
 import edu.uoc.ds.adt.sequential.Queue;
 import edu.uoc.ds.adt.sequential.QueueArrayImpl;
 import edu.uoc.ds.traversal.Iterator;
-import edu.uoc.ds.traversal.IteratorArrayImpl;
 import uoc.ds.pr.exceptions.*;
 import uoc.ds.pr.model.*;
 import uoc.ds.pr.utils.OrderedVector;
@@ -15,25 +16,20 @@ import java.util.Objects;
 
 public class CTTCompaniesJobsImpl implements CTTCompaniesJobs {
 
-    private final Worker[] workers;
-    private final Company[] companies;
-    private final JobOffer[] jobOffers;
+    private final Dictionary<String, Worker> workers;
+    private final Dictionary<String, Company> companies;
+    private final Dictionary<String, JobOffer> jobOffers;
     // TODO - switch to QueueLinkedList
-    private int totalRequests;
     private final Queue<Request> requests;
-
+    private int totalRequests;
+    private int totalRejectedRequests;
     private OrderedVector<JobOffer> bestJobOffers;
     private Worker mostActiveWorker;
 
-    private int numWorkers;
-    private int numCompanies;
-    private int numJobOffers;
-    private int totalRejectedRequests;
-
     public CTTCompaniesJobsImpl() {
-        workers = new Worker[MAX_NUM_WORKERS];
-        companies = new Company[MAX_NUM_COMPANIES];
-        jobOffers = new JobOffer[MAX_NUM_JOBOFFERS];
+        workers = new DictionaryArrayImpl<>(MAX_NUM_WORKERS);
+        companies = new DictionaryArrayImpl<>(MAX_NUM_COMPANIES);
+        jobOffers = new DictionaryArrayImpl<>(MAX_NUM_JOBOFFERS);
         requests = new QueueArrayImpl<>();
         bestJobOffers = new OrderedVector<>(MAX_NUM_RATINGS, Comparator.comparingDouble(JobOffer::getTotalRating));
     }
@@ -48,7 +44,7 @@ public class CTTCompaniesJobsImpl implements CTTCompaniesJobs {
             worker.setQualification(qualification);
         } else {
             worker = new Worker(id, name, surname, dateOfBirth, qualification);
-            workers[numWorkers++] = worker;
+            workers.put(worker.getId(), worker);
         }
     }
 
@@ -60,7 +56,7 @@ public class CTTCompaniesJobsImpl implements CTTCompaniesJobs {
             company.setDescription(description);
         } else {
             company = new Company(id, name, description);
-            companies[numCompanies++] = company;
+            companies.put(id, company);
         }
     }
 
@@ -88,7 +84,7 @@ public class CTTCompaniesJobsImpl implements CTTCompaniesJobs {
 
         if (Status.ENABLED.equals(status)) {
             JobOffer jobOffer = request.getJobOffer();
-            jobOffers[numJobOffers++] = jobOffer;
+            jobOffers.put(jobOffer.getJobOfferId(), jobOffer);
             jobOffer.getCompany().addJobOffer(jobOffer);
         } else if (Status.DISABLED.equals(status)) {
             totalRejectedRequests++;
@@ -150,7 +146,7 @@ public class CTTCompaniesJobsImpl implements CTTCompaniesJobs {
         if (numJobOffers() == 0)
             throw new NOJobOffersException("There are no job offers currently.");
 
-        return new IteratorArrayImpl<>(this.jobOffers, this.numJobOffers, 0);
+        return jobOffers.values();
     }
 
     @Override
@@ -215,53 +211,32 @@ public class CTTCompaniesJobsImpl implements CTTCompaniesJobs {
 
     @Override
     public Worker getWorker(String id) {
-        for (Worker worker : workers) {
-            if (worker == null) {
-                return null;
-            } else if (worker.getId().equals(id)) {
-                return worker;
-            }
-        }
-        return null;
+        return workers.get(id);
     }
 
     @Override
     public Company getCompany(String id) {
-        for (Company company : companies) {
-            if (company == null) {
-                return null;
-            } else if (company.getId().equals(id)) {
-                return company;
-            }
-        }
-        return null;
+        return companies.get(id);
     }
 
     @Override
     public JobOffer getJobOffer(String jobOfferId) {
-        for (JobOffer jobOffer : jobOffers) {
-            if (jobOffer == null) {
-                return null;
-            } else if (jobOffer.getJobOfferId().equals(jobOfferId)) {
-                return jobOffer;
-            }
-        }
-        return null;
+        return jobOffers.get(jobOfferId);
     }
 
     @Override
     public int numWorkers() {
-        return numWorkers;
+        return workers.size();
     }
 
     @Override
     public int numCompanies() {
-        return numCompanies;
+        return companies.size();
     }
 
     @Override
     public int numJobOffers() {
-        return numJobOffers;
+        return jobOffers.size();
     }
 
     @Override
