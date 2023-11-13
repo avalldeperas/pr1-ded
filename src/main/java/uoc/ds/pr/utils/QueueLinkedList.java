@@ -3,41 +3,38 @@ package uoc.ds.pr.utils;
 import edu.uoc.ds.adt.sequential.LinkedList;
 import edu.uoc.ds.adt.sequential.Queue;
 import edu.uoc.ds.traversal.Iterator;
-import edu.uoc.ds.traversal.IteratorArrayImpl;
 
 public class QueueLinkedList<T> extends LinkedList<T> implements Queue<T> {
 
-    private T first;
-    private T last;
-    private Queue<T> data;
+    protected LinkedList<T> elems;
+
+    public QueueLinkedList() {
+        elems = new LinkedList<>();
+    }
 
     @Override
     public void add(T t) {
-        data.add(t);
+        elems.insertEnd(t);
     }
 
     @Override
     public T poll() {
-        return data.poll();
+        return elems.deleteFirst();
     }
 
     @Override
     public T peek() {
-        return data.peek();
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return data.isEmpty();
-    }
-
-    @Override
-    public int size() {
-        return data.size();
+        Iterator<T> values = elems.values();
+        return values.hasNext() ? values.next() : null;
     }
 
     @Override
     public Iterator<T> values() {
-        return this.data.values();
+        return elems.values();
+    }
+
+    @Override
+    public int size() {
+        return elems.size();
     }
 }

@@ -3,7 +3,6 @@ package uoc.ds.pr;
 import edu.uoc.ds.adt.nonlinear.Dictionary;
 import edu.uoc.ds.adt.sequential.DictionaryArrayImpl;
 import edu.uoc.ds.adt.sequential.Queue;
-import edu.uoc.ds.adt.sequential.QueueArrayImpl;
 import edu.uoc.ds.traversal.Iterator;
 import uoc.ds.pr.exceptions.*;
 import uoc.ds.pr.model.*;
@@ -19,7 +18,6 @@ public class CTTCompaniesJobsImpl implements CTTCompaniesJobs {
     private final Dictionary<String, Worker> workers;
     private final Dictionary<String, Company> companies;
     private final Dictionary<String, JobOffer> jobOffers;
-    // TODO - switch to QueueLinkedList
     private final Queue<Request> requests;
     private int totalRequests;
     private int totalRejectedRequests;
@@ -30,7 +28,7 @@ public class CTTCompaniesJobsImpl implements CTTCompaniesJobs {
         workers = new DictionaryArrayImpl<>(MAX_NUM_WORKERS);
         companies = new DictionaryArrayImpl<>(MAX_NUM_COMPANIES);
         jobOffers = new DictionaryArrayImpl<>(MAX_NUM_JOBOFFERS);
-        requests = new QueueArrayImpl<>();
+        requests = new QueueLinkedList<>();
         bestJobOffers = new OrderedVector<>(MAX_NUM_RATINGS, Comparator.comparingDouble(JobOffer::getTotalRating));
     }
 
