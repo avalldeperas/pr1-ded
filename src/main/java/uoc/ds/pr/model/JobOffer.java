@@ -3,9 +3,9 @@ package uoc.ds.pr.model;
 import edu.uoc.ds.adt.sequential.LinkedList;
 import edu.uoc.ds.adt.sequential.List;
 import edu.uoc.ds.adt.sequential.Queue;
-import edu.uoc.ds.adt.sequential.QueueArrayImpl;
 import edu.uoc.ds.traversal.Iterator;
 import uoc.ds.pr.CTTCompaniesJobs;
+import uoc.ds.pr.utils.QueueLinkedList;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -19,10 +19,8 @@ public class JobOffer implements Comparable<JobOffer>{
     private final CTTCompaniesJobs.Qualification minQualification;
     private final int maxWorkers;
     private int numWorkers;
-    // TODO - change to QueueLinkedList
-    private Queue<Enrollment> enrollments;
-    // TODO - change to QueueLinkedList
-    private Queue<Enrollment> substituteEnrollments;
+    private final Queue<Enrollment> enrollments;
+    private final Queue<Enrollment> substituteEnrollments;
     private int numSubstitutes;
     private List<Rating> ratings;
     private double sumRatings;
@@ -35,9 +33,8 @@ public class JobOffer implements Comparable<JobOffer>{
         this.endDate = endDate;
         this.workingDays = (int) ChronoUnit.DAYS.between(startDate, endDate);
         this.minQualification = minQualification;
-        // TODO - change the type instances accordingly
-        this.enrollments = new QueueArrayImpl<>();
-        this.substituteEnrollments = new QueueArrayImpl<>();
+        this.enrollments = new QueueLinkedList<>();
+        this.substituteEnrollments = new QueueLinkedList<>();
         this.ratings = new LinkedList<>();
         this.sumRatings = 0;
     }
