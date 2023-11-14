@@ -10,7 +10,8 @@ import uoc.ds.pr.utils.QueueLinkedList;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
-public class JobOffer implements Comparable<JobOffer>{
+public class JobOffer implements Comparable<JobOffer> {
+
     private final String jobOfferId;
     private final Company company;
     private final LocalDate startDate;
@@ -105,7 +106,7 @@ public class JobOffer implements Comparable<JobOffer>{
         return ratings.values();
     }
 
-    public void addRating(Rating rating){
+    public void addRating(Rating rating) {
         this.ratings.insertEnd(rating);
         sumRatings += rating.getValue();
     }
@@ -122,9 +123,9 @@ public class JobOffer implements Comparable<JobOffer>{
         if (enrollments == null)
             return false;
 
-        while (enrollments.hasNext()){
+        while (enrollments.hasNext()) {
             Enrollment next = enrollments.next();
-            if (workerId.equals(next.getWorker().getId())){
+            if (workerId.equals(next.getWorker().getId())) {
                 return true;
             }
         }

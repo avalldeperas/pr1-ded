@@ -1,6 +1,7 @@
 package uoc.ds.pr.model;
 
 public class Rating {
+
     private final int value;
     private final String message;
 

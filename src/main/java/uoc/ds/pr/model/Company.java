@@ -5,9 +5,9 @@ import edu.uoc.ds.adt.sequential.LinkedList;
 public class Company {
 
     private final String id;
+    private final LinkedList<JobOffer> jobOffers;
     private String name;
     private String description;
-    private LinkedList<JobOffer> jobOffers;
 
     public Company(String id, String name, String description) {
         this.id = id;
@@ -40,7 +40,7 @@ public class Company {
         return jobOffers;
     }
 
-    public void addJobOffer(JobOffer jobOffer){
+    public void addJobOffer(JobOffer jobOffer) {
         jobOffers.insertEnd(jobOffer);
     }
 }

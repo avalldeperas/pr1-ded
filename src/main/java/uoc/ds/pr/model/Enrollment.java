@@ -1,7 +1,8 @@
 package uoc.ds.pr.model;
 
 public class Enrollment {
-    private Worker worker;
+
+    private final Worker worker;
 
     public Enrollment(Worker worker) {
         this.worker = worker;

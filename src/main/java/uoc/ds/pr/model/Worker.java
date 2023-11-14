@@ -7,13 +7,13 @@ import java.time.LocalDate;
 
 public class Worker {
 
+    private final String id;
+    private final LinkedList<JobOffer> jobOffers;
     private String name;
     private String surname;
     private LocalDate dateOfBirth;
     private CTTCompaniesJobs.Qualification qualification;
-    private String id;
     private int workingDays;
-    private LinkedList<JobOffer> jobOffers;
 
     public Worker(String id, String name, String surname, LocalDate dateOfBirth, CTTCompaniesJobs.Qualification qualification) {
         this.id = id;
@@ -28,7 +28,7 @@ public class Worker {
         return this.name;
     }
 
-    public void setName(String name){
+    public void setName(String name) {
         this.name = name;
     }
 
@@ -36,7 +36,7 @@ public class Worker {
         return this.surname;
     }
 
-    public void setSurname(String surname){
+    public void setSurname(String surname) {
         this.surname = surname;
     }
 
@@ -44,7 +44,7 @@ public class Worker {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(LocalDate dateOfBirth){
+    public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 
@@ -52,7 +52,7 @@ public class Worker {
         return qualification;
     }
 
-    public void setQualification(CTTCompaniesJobs.Qualification qualification){
+    public void setQualification(CTTCompaniesJobs.Qualification qualification) {
         this.qualification = qualification;
     }
 
@@ -64,7 +64,7 @@ public class Worker {
         return workingDays;
     }
 
-    public void addWorkingDays(int workingDays){
+    public void addWorkingDays(int workingDays) {
         this.workingDays += workingDays;
     }
 

@@ -19,9 +19,9 @@ public class DateUtils {
         }
         return ret;
     }
-    
+
     public static LocalDate createLocalDate(String date) {
-    	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-    	return LocalDate.parse(date, formatter);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        return LocalDate.parse(date, formatter);
     }
 }

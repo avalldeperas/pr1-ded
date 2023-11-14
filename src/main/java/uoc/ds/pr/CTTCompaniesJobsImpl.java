@@ -175,8 +175,8 @@ public class CTTCompaniesJobsImpl implements CTTCompaniesJobs {
         jobOffer.addRating(rating);
 
         // TODO - update ordered vector of best offers
-        this.bestJobOffers.delete(jobOffer);
-        this.bestJobOffers.update(jobOffer);
+        bestJobOffers.delete(jobOffer);
+        bestJobOffers.update(jobOffer);
     }
 
     @Override
@@ -204,7 +204,7 @@ public class CTTCompaniesJobsImpl implements CTTCompaniesJobs {
         if (bestJobOffers.size() == 0)
             throw new NOJobOffersException("There are no rated job offers yet.");
 
-        return bestJobOffers.getFirstElement();
+        return bestJobOffers.getElementAt(0);
     }
 
     @Override
