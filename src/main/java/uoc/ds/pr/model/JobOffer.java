@@ -112,11 +112,15 @@ public class JobOffer implements Comparable<JobOffer> {
     }
 
     public boolean hasWorkerId(String workerId) {
-        if (findWorker(workerId, getEnrollments()))
+        if (hasEnrolledWorkerId(workerId))
             return true;
 
         // We also need to check if worker is in substitutes.
         return findWorker(workerId, substitutes());
+    }
+
+    public boolean hasEnrolledWorkerId(String workerId) {
+        return findWorker(workerId, getEnrollments());
     }
 
     private static boolean findWorker(String workerId, Iterator<Enrollment> enrollments) {

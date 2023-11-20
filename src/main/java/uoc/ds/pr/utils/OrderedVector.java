@@ -58,18 +58,18 @@ public class OrderedVector<T> implements FiniteContainer<T> {
     }
 
     public void rightShift(int i) {
-        int p = len - 1;
-        while (p >= i) {
-            elems[p + 1] = elems[p];
-            p--;
+        int pos = len - 1;
+        while (pos >= i) {
+            elems[pos + 1] = elems[pos];
+            pos--;
         }
     }
 
     public void leftShift(int i) {
-        int p = i;
-        while (p < len - 1) {
-            elems[p] = elems[p + 1];
-            p++;
+        int pos = i;
+        while (pos < len - 1) {
+            elems[pos] = elems[pos + 1];
+            pos++;
         }
     }
 

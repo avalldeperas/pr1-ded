@@ -18,7 +18,7 @@ public class CTTCompaniesJobsImpl implements CTTCompaniesJobs {
     private final Dictionary<String, Worker> workers;
     private final Dictionary<String, Company> companies;
     private final Dictionary<String, JobOffer> jobOffers;
-    private final Queue<Request> requests;
+    private final Queue<Request> pendingRequests;
     private int totalRequests;
     private int totalRejectedRequests;
     private OrderedVector<JobOffer> bestJobOffers;
@@ -28,7 +28,7 @@ public class CTTCompaniesJobsImpl implements CTTCompaniesJobs {
         workers = new DictionaryArrayImpl<>(MAX_NUM_WORKERS);
         companies = new DictionaryArrayImpl<>(MAX_NUM_COMPANIES);
         jobOffers = new DictionaryArrayImpl<>(MAX_NUM_JOBOFFERS);
-        requests = new QueueLinkedList<>();
+        pendingRequests = new QueueLinkedList<>();
         bestJobOffers = new OrderedVector<>(MAX_NUM_RATINGS, Comparator.comparingDouble(JobOffer::getTotalRating));
     }
 
@@ -61,20 +61,20 @@ public class CTTCompaniesJobsImpl implements CTTCompaniesJobs {
     @Override
     public void addRequest(String id, String jobOfferId, String companyId, String description, Qualification minQualification, int maxWorkers, LocalDate startDate, LocalDate endDate) throws CompanyNotFoundException {
         Company company = getCompany(companyId);
-        if (company == null)
+        if (Objects.isNull(company))
             throw new CompanyNotFoundException(String.format("Company %s not found.", companyId));
 
         JobOffer jobOffer = new JobOffer(jobOfferId, company, maxWorkers, minQualification, startDate, endDate);
 
         Request request = new Request(id, jobOffer, description);
-        requests.add(request);
+        pendingRequests.add(request);
         totalRequests++;
     }
 
     @Override
     public Request updateRequest(Status status, LocalDate date, String description) throws NoRequestException {
-        Request request = this.requests.poll();
-        if (request == null)
+        Request request = this.pendingRequests.poll();
+        if (Objects.isNull(request))
             throw new NoRequestException("There are no requests to update.");
         request.setStatus(status);
         request.setDateStatus(date);
@@ -95,11 +95,11 @@ public class CTTCompaniesJobsImpl implements CTTCompaniesJobs {
     @Override
     public Response signUpJobOffer(String workerId, String jobOfferId) throws JobOfferNotFoundException, WorkerNotFoundException, WorkerAlreadyEnrolledException {
         Worker worker = getWorker(workerId);
-        if (worker == null)
+        if (Objects.isNull(worker))
             throw new WorkerNotFoundException(String.format("Worker with id '%s' not found.", workerId));
 
         JobOffer jobOffer = getJobOffer(jobOfferId);
-        if (jobOffer == null)
+        if (Objects.isNull(jobOffer))
             throw new JobOfferNotFoundException(String.format("Job offer with id '%s' not found.", jobOfferId));
 
         if (jobOffer.hasWorkerId(workerId))
@@ -118,7 +118,7 @@ public class CTTCompaniesJobsImpl implements CTTCompaniesJobs {
         worker.addJobOffer(jobOffer);
         worker.addWorkingDays(jobOffer.getWorkingDays());
 
-        if (mostActiveWorker == null || worker.getWorkingDays() > mostActiveWorker.getWorkingDays())
+        if (Objects.isNull(mostActiveWorker) || worker.getWorkingDays() > mostActiveWorker.getWorkingDays())
             mostActiveWorker = worker;
 
         return Response.ACCEPTED;
@@ -141,7 +141,7 @@ public class CTTCompaniesJobsImpl implements CTTCompaniesJobs {
 
     @Override
     public Iterator<JobOffer> getAllJobOffers() throws NOJobOffersException {
-        if (numJobOffers() == 0)
+        if (jobOffers.isEmpty())
             throw new NOJobOffersException("There are no job offers currently.");
 
         return jobOffers.values();
@@ -160,21 +160,19 @@ public class CTTCompaniesJobsImpl implements CTTCompaniesJobs {
     @Override
     public void addRating(String workerId, String jobOfferId, int value, String message) throws WorkerNotFoundException, JobOfferNotFoundException, WorkerNOEnrolledException {
         Worker worker = getWorker(workerId);
-        if (worker == null)
+        if (Objects.isNull(worker))
             throw new WorkerNotFoundException(String.format("Worker %s not found.", workerId));
 
         JobOffer jobOffer = getJobOffer(jobOfferId);
-        if (jobOffer == null)
+        if (Objects.isNull(jobOffer))
             throw new JobOfferNotFoundException(String.format("Job offer %s", jobOfferId));
 
-        // TODO - do only enrolled workers (NOT susbstitutes) be able to add ratings?
-        if (!jobOffer.hasWorkerId(workerId))
+        // Only enrolled workers (NOT susbstitutes) be able to add ratings?
+        if (!jobOffer.hasEnrolledWorkerId(workerId))
             throw new WorkerNOEnrolledException(String.format("Worker id %s not enrolled to job offer %s yet.", workerId, jobOfferId));
 
-        Rating rating = new Rating(value, message);
-        jobOffer.addRating(rating);
+        jobOffer.addRating(new Rating(value, message));
 
-        // TODO - update ordered vector of best offers
         bestJobOffers.delete(jobOffer);
         bestJobOffers.update(jobOffer);
     }
@@ -182,7 +180,7 @@ public class CTTCompaniesJobsImpl implements CTTCompaniesJobs {
     @Override
     public Iterator<Rating> getRatingsByJobOffer(String jobOfferId) throws JobOfferNotFoundException, NORatingsException {
         JobOffer jobOffer = getJobOffer(jobOfferId);
-        if (jobOffer == null)
+        if (Objects.isNull(jobOffer))
             throw new JobOfferNotFoundException(String.format("Job offer '%s' does not exist.", jobOfferId));
 
         if (!jobOffer.getRatings().hasNext())
@@ -193,7 +191,7 @@ public class CTTCompaniesJobsImpl implements CTTCompaniesJobs {
 
     @Override
     public Worker getMostActiveWorker() throws NoWorkerException {
-        if (mostActiveWorker == null)
+        if (Objects.isNull(mostActiveWorker))
             throw new NoWorkerException("There are no workers with any activity yet.");
 
         return mostActiveWorker;
@@ -201,7 +199,7 @@ public class CTTCompaniesJobsImpl implements CTTCompaniesJobs {
 
     @Override
     public JobOffer getBestJobOffer() throws NOJobOffersException {
-        if (bestJobOffers.size() == 0)
+        if (bestJobOffers.isEmpty())
             throw new NOJobOffersException("There are no rated job offers yet.");
 
         return bestJobOffers.getElementAt(0);
@@ -239,7 +237,7 @@ public class CTTCompaniesJobsImpl implements CTTCompaniesJobs {
 
     @Override
     public int numPendingRequests() {
-        return requests.size();
+        return pendingRequests.size();
     }
 
     @Override
