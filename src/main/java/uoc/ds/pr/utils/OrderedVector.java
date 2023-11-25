@@ -35,29 +35,29 @@ public class OrderedVector<T> implements FiniteContainer<T> {
             return;
         }
 
-        int i = 0;
-        while (i < len && Objects.nonNull(elems[i]) && cmp.compare(elems[i], newElem) >= 0)
-            i++;
+        int nextPosition = 0;
+        for (int i = 0; i < len; i++){
+            if (Objects.nonNull(elems[i]) && cmp.compare(elems[i], newElem) >= 0){
+                nextPosition = i + 1;
+            }
+        }
 
-        rightShift(i);
-        elems[i] = newElem;
+        rightShift(nextPosition);
+        elems[nextPosition] = newElem;
         len++;
     }
 
     public void delete(T elem) {
-        int i = 0;
-        boolean found = false;
-
-        while (!found && i < len)
-            found = cmp.compare(elems[i++], elem) == 0;
-
-        if (found) {
-            leftShift(i - 1);
-            len--;
+        for (int i = 0; i < len; i++) {
+            if (cmp.compare(elems[i], elem) == 0){
+                leftShift(i);
+                len--;
+                return;
+            }
         }
     }
 
-    public void rightShift(int i) {
+    private void rightShift(int i) {
         int pos = len - 1;
         while (pos >= i) {
             elems[pos + 1] = elems[pos];
@@ -65,7 +65,7 @@ public class OrderedVector<T> implements FiniteContainer<T> {
         }
     }
 
-    public void leftShift(int i) {
+    private void leftShift(int i) {
         int pos = i;
         while (pos < len - 1) {
             elems[pos] = elems[pos + 1];

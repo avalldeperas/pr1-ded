@@ -21,7 +21,7 @@ public class CTTCompaniesJobsImpl implements CTTCompaniesJobs {
     private final Queue<Request> pendingRequests;
     private int totalRequests;
     private int totalRejectedRequests;
-    private OrderedVector<JobOffer> bestJobOffers;
+    private final OrderedVector<JobOffer> bestJobOffers;
     private Worker mostActiveWorker;
 
     public CTTCompaniesJobsImpl() {
@@ -86,7 +86,6 @@ public class CTTCompaniesJobsImpl implements CTTCompaniesJobs {
             jobOffer.getCompany().addJobOffer(jobOffer);
         } else if (Status.DISABLED.equals(status)) {
             totalRejectedRequests++;
-            // TODO missing test for checking that for DISABLED, we don't store job offers in companies?
         }
 
         return request;
