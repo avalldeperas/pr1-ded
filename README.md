@@ -94,7 +94,7 @@ that LinkedList already provides and adds the queue operations (add, poll and pe
 - polling enrollments and substitutes (worker ends job offer)
 - add ratings by just enrolled workers, not substitutes
 - add ratings until the capacity is out, least rated offer is removed from the list.
-- added new tests for OrderedVector to add coverage
+- added new tests for OrderedVector to add coverage and missing check that when delete, value at position is null.
 - updateRequestTest_whenDiscardedStatus_jobOffersNotStoredToCompanies
 
 ### Out of scope
