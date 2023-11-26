@@ -166,12 +166,10 @@ public class CTTCompaniesJobsImpl implements CTTCompaniesJobs {
         if (Objects.isNull(jobOffer))
             throw new JobOfferNotFoundException(String.format("Job offer %s", jobOfferId));
 
-        // Only enrolled workers (NOT susbstitutes) be able to add ratings?
         if (!jobOffer.hasEnrolledWorkerId(workerId))
             throw new WorkerNOEnrolledException(String.format("Worker id %s not enrolled to job offer %s yet.", workerId, jobOfferId));
 
         jobOffer.addRating(new Rating(value, message));
-
         bestJobOffers.delete(jobOffer);
         bestJobOffers.update(jobOffer);
     }

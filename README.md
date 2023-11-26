@@ -1,16 +1,18 @@
 # Data Structures - PR1
 
 ## Overview
-This assignment (PR1) consists of a programming exercise that will be reusable for Practice 2 (PR2), where we needed 
-to apply the acquired knowledge. Specifically, in this activity we will work on the implementation of data structures that have been defined and 
-designed with the information volume constraints specified in PAC1. These structures should allow us to store information about the university's technology and telecommunications center.
+This assignment (PR1) consists of a programming exercise that will be reuszable for Practice 2 (PR2), where we needed 
+to apply the acquired knowledge. Specifically, in this activity we will work on the implementation of data structures that 
+have been defined and designed with the information volume constraints specified in PAC1. These structures should allow 
+us to store information about the university's technology and telecommunications center.
 
 ## Requisites
 - [Java 8](https://www.oracle.com/es/java/technologies/javase/javase8-archive-downloads.html) or more
 - [JUnit 4](https://junit.org/junit4/)
 
 ## Model
-In this PR1 we'll basically deal with the following entities and concepts found in the [model](src/main/java/uoc/ds/pr/model) package:
+In this PR1 we'll basically deal with the following entities and concepts found in the 
+[model](src/main/java/uoc/ds/pr/model) package:
 - **Worker**: Workers that exist in the system
 - **Company**: Existing companies in the system
 - **JobOffer**: Job offers that are requested by companies and signed up by workers
@@ -20,8 +22,9 @@ In this PR1 we'll basically deal with the following entities and concepts found 
 
 
 ## Functionality
-All operations required for PR1 are defined in the [CTTCompaniesJobs.java](src/main/java/uoc/ds/pr/CTTCompaniesJobs.java) interface. Additionally, 
-constants are provided to define fixed containers, and enumerations are provided to define the states of requests, qualifications, and expected results in a record.
+All operations required for PR1 are defined in the [CTTCompaniesJobs.java](src/main/java/uoc/ds/pr/CTTCompaniesJobs.java) 
+interface. Additionally, constants are provided to define fixed containers, and enumerations are provided to define the
+states of requests, qualifications, and expected results in a record.
 
 The requirements for this PR1 are the following:
 - **addWorker**(id, name, surname, dateOfBirth, qualification)
@@ -39,7 +42,7 @@ The requirements for this PR1 are the following:
 - **getBestJobOffer**(): JobOffer
 
 
-Additionally, there's these new operations that allow to inspect the data structures:
+Additionally, there are these new operations that allow us to inspect the data structures:
 - **getWorker**(String id): Worker
 - **getCompany**(String id): Company
 - **getJobOffer**(String jobOfferId): JobOffer
@@ -62,7 +65,7 @@ utils section.
 - LinkedList<JobOffer> jobOffers
 
 ### Exceptions
-The Exceptions below have been added to the exceptions folder, all extend[OrderedVector(1).java](..%2F..%2FDownloads%2FOrderedVector%281%29.java)ing 
+The Exceptions below have been added to the exceptions folder, all extending [OrderedVector.java](src/main/java/uoc/ds/pr/utils/OrderedVector.java) 
 [DSException.java](src/main/java/uoc/ds/pr/exceptions/DSException.java):
 
 - [CompanyNotFoundException.java](src/main/java/uoc/ds/pr/exceptions/CompanyNotFoundException.java)
@@ -83,20 +86,25 @@ scratch, which consists on having an array that handles updates and deletes to a
 - [QueueLinkedList.java](src/main/java/uoc/ds/pr/utils/QueueLinkedList.java): it consists on reusing the functionality 
 that LinkedList already provides and adds the queue operations (add, poll and peek).
 
-
-### Other changes
-- public class OrderedVector<T> extends Vector<T> per poder tenir elementAt?
-- ús de DictionaryArrayImpl<> per a key value de workers, company i job offers per a reutilitzar l'implementació.
-- Removed 'public' modifier from CTTCompaniesJobs as it's redundant for
-- instantiation java defaults to 0 and nulls...
-
 ### Additional tests
-- polling enrollments and substitutes (worker ends job offer)
-- add ratings by just enrolled workers, not substitutes
-- add ratings until the capacity is out, least rated offer is removed from the list.
-- added new tests for OrderedVector to add coverage and missing check that when delete, value at position is null.
-- updateRequestTest_whenDiscardedStatus_jobOffersNotStoredToCompanies
+In order to complete the coverage of the source code two additional tests have been added:
+- [OrderedVectorAdditionalTest.java](src/test/java/uoc/ds/pr/util/OrderedVectorAdditionalTest.java) with the tests:
+    - getElementAt: ensures that values are returned as expected, as well as the exceptions thrown.
+    - delete: added 4 tests that checks we clean array values when using delete in different cases.
+    - isEmpty: also added tests for this method.
+- [CTTCompaniesJobsImplAdditionalTests.java](uoc/ds/pr/CTTCompaniesJobsImplAdditionalTests.java) with some missing
+  test cases that were missing from initial tests:
+    - Max capacity test exceptions for workers, companies and job offers. There is the exception to bestJobOffers max
+  capacity which has not been tested because is an impossible case, as we always remove an element if array is full.
+    - Given an update request with disabled status, the job offer requested is not stored to the companies.
+
+### Other considerations
+- Removed `public` modifier on the methods from CTTCompaniesJobs interface as it's redundant.
 
 ### Out of scope
-- not tested max values for each data structure.
-- Only enrolled workers (NOT susbstitutes) be able to add ratings?
+There are some cases that are left out of scope:
+- Only enrolled workers —and not substitutes— should be able to add jobOffer ratings, as these haven't tried it
+yet.
+- Same worker can add infinite ratings to the same job offer, but should just be one.
+- Return own exceptions that would require changes to the signature of the methods. For example, accessing an incorrect
+index of the OrderedVector with the getElementAt().
