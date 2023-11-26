@@ -1,6 +1,5 @@
 package uoc.ds.pr;
 
-import edu.uoc.ds.exceptions.EmptyContainerException;
 import edu.uoc.ds.exceptions.FullContainerException;
 import org.junit.After;
 import org.junit.Assert;
@@ -8,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import uoc.ds.pr.exceptions.CompanyNotFoundException;
 import uoc.ds.pr.exceptions.DSException;
+import uoc.ds.pr.exceptions.NoRequestException;
 import uoc.ds.pr.model.Company;
 import uoc.ds.pr.model.Request;
 
@@ -28,7 +28,7 @@ public class CTTCompaniesJobsImplAdditionalTests {
     }
 
     @Test
-    public void addWorkerTest_maxCapacity() {
+    public void addWorker_maxCapacity_exceptionThrown() {
         Assert.assertEquals(250, this.cttCompaniesJobs.numWorkers());
 
         Assert.assertThrows(FullContainerException.class, () ->
@@ -37,14 +37,14 @@ public class CTTCompaniesJobsImplAdditionalTests {
     }
 
     @Test
-    public void addCompanyTest_maxCapacity() {
+    public void addCompany_maxCapacity_exceptionThrown() {
         Assert.assertEquals(26, this.cttCompaniesJobs.numCompanies());
         Assert.assertThrows(FullContainerException.class, () ->
                 cttCompaniesJobs.addCompany("cId251", "cName251", "cDescription251"));
     }
 
     @Test
-    public void addJobOfferTest_maxCapacity() throws CompanyNotFoundException {
+    public void addJobOffer_maxCapacity_exceptionThrown() throws CompanyNotFoundException {
         Assert.assertEquals(350, this.cttCompaniesJobs.numJobOffers());
         cttCompaniesJobs.addRequest("requestId351", "jobOfferIdB351", "companyId1",
                 "The description - request351", CTTCompaniesJobs.Qualification.HIGH_SCHOOL,
@@ -70,8 +70,8 @@ public class CTTCompaniesJobsImplAdditionalTests {
     }
 
     @Test
-    public void updateRequestTest_when_jobOffersNotStoredToCompanies() {
-        Assert.assertThrows(EmptyContainerException.class, () -> cttCompaniesJobs.updateRequest(CTTCompaniesJobs.Status.DISABLED,
+    public void updateRequest_whenNoPendingRequests_exceptionIsThrown() {
+        Assert.assertThrows(NoRequestException.class, () -> cttCompaniesJobs.updateRequest(CTTCompaniesJobs.Status.DISABLED,
                 createLocalDate("10-11-2023"), "KO (id1)"));
     }
 }

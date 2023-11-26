@@ -62,7 +62,8 @@ which holds a pair of key value (KeyValue<id, Object>), to store workers, compan
 require a FIFO behaviour. Those objects are (pending) requests and also enrollments and substitutes for a given JobOffer.
 - **OrderedVector**: we have used this structure to store the best job offers (top 10) in the system. More details in
 utils section.
-- LinkedList<JobOffer> jobOffers
+- **LinkedList**: used in Worker and Company to store their associated job offers. Also used on JobOffer class,
+to store its ratings.
 
 ### Exceptions
 The Exceptions below have been added to the exceptions folder, all extending [OrderedVector.java](src/main/java/uoc/ds/pr/utils/OrderedVector.java) 
@@ -93,10 +94,11 @@ In order to complete the coverage of the source code two additional tests have b
     - delete: added 4 tests that checks we clean array values when using delete in different cases.
     - isEmpty: also added tests for this method.
 - [CTTCompaniesJobsImplAdditionalTests.java](uoc/ds/pr/CTTCompaniesJobsImplAdditionalTests.java) with some missing
-  test cases that were missing from initial tests:
+  cases from initial tests:
     - Max capacity test exceptions for workers, companies and job offers. There is the exception to bestJobOffers max
   capacity which has not been tested because is an impossible case, as we always remove an element if array is full.
     - Given an update request with disabled status, the job offer requested is not stored to the companies.
+    - Call updateRequest when there are no pending requests which throws NoRequestException.
 
 ### Other considerations
 - Removed `public` modifier on the methods from CTTCompaniesJobs interface as it's redundant.

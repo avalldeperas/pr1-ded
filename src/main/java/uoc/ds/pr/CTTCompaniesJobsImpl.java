@@ -73,9 +73,10 @@ public class CTTCompaniesJobsImpl implements CTTCompaniesJobs {
 
     @Override
     public Request updateRequest(Status status, LocalDate date, String description) throws NoRequestException {
-        Request request = this.pendingRequests.poll();
-        if (Objects.isNull(request))
+        if (pendingRequests.size() == 0)
             throw new NoRequestException("There are no requests to update.");
+
+        Request request = pendingRequests.poll();
         request.setStatus(status);
         request.setDateStatus(date);
         request.setDescriptionStatus(description);
